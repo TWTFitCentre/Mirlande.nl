@@ -183,6 +183,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <ul style="margin: 24px 0 0; padding: 0; list-style: none; display: flex; flex-wrap: wrap; gap: 8px 10px; font-size: 14px; font-weight: 600;">
 <li style="background: #e6f5f6; border-radius: 999px; padding: 6px 14px;">Start dinsdag 1 december</li>
 <li style="background: #e6f5f6; border-radius: 999px; padding: 6px 14px;">24 dagen, t/m 24 december</li>
+<li style="background: #e6f5f6; border-radius: 999px; padding: 6px 14px;">Instappen kan t/m 5 december</li>
 <li style="background: #e6f5f6; border-radius: 999px; padding: 6px 14px;">Elke ochtend 7:00</li>
 <li style="background: #e6f5f6; border-radius: 999px; padding: 6px 14px;">Gratis, voor vrouwen 40+</li>
 </ul>
@@ -255,7 +256,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <li style="flex: 1 1 220px; min-width: 0; list-style: none; background: #e6f5f6; border-radius: 22px; padding: 22px 24px; box-sizing: border-box;">
 <div style="width: 40px; height: 40px; border-radius: 50%; background: #0e7580; color: #ffffff; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">2</div>
 <h3 style="margin: 0 0 6px; font-size: 18px; color: #142836;">Ga naar de WhatsApp-community</h3>
-<p style="margin: 0; font-size: 16px; color: #3d5f63;">Je krijgt de link naar de community. Klik erop en vraag om lid te worden.</p>
+<p style="margin: 0; font-size: 16px; color: #3d5f63;">Na je aanmelding zie je meteen de link naar de community, en je krijgt hem ook per mail. Klik erop en vraag om lid te worden.</p>
 </li>
 <li style="flex: 1 1 220px; min-width: 0; list-style: none; background: #e6f5f6; border-radius: 22px; padding: 22px 24px; box-sizing: border-box;">
 <div style="width: 40px; height: 40px; border-radius: 50%; background: #0e7580; color: #ffffff; font-weight: 700; display: flex; align-items: center; justify-content: center; margin-bottom: 12px;">3</div>
@@ -385,11 +386,16 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 
 <script>
 (function () {
-  var WHATSAPP_URL = "";
-  var CLOSE_AT = new Date("2026-12-25T00:00:00+01:00");
+  var WHATSAPP_URL = "https://chat.whatsapp.com/I0XTcNmfvSNEMpEjrHiyoU";
+  var CLOSE_AT = new Date("2026-12-06T00:00:00+01:00");
+  var END_AT = new Date("2026-12-25T00:00:00+01:00");
   var root = document.getElementById('dc-form-root');
   if (!root) return;
-  if (new Date() >= CLOSE_AT) {
+  if (new Date() >= CLOSE_AT && new Date() < END_AT) {
+    root.innerHTML = '<p style="margin:0;font-size:18px;font-weight:600;color:#142836">Aanmelden is gesloten.</p><p style="margin:8px 0 0;color:#3d5f63">De challenge loopt nog tot en met 24 december. Doe je al mee? Dan vind je alles in de WhatsApp-community.</p>';
+    return;
+  }
+  if (new Date() >= END_AT) {
     root.innerHTML = '<p style="margin:0;font-size:18px;font-weight:600;color:#142836">De december-challenge is afgelopen.</p><p style="margin:8px 0 0;color:#3d5f63">Wil je in het nieuwe jaar verder? <a href="/#kennismaken" style="color:#0e7580;text-decoration:underline">Plan een gratis kennismaking</a>.</p>';
     return;
   }
