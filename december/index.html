@@ -150,7 +150,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <div style="background: #0e7580; color: #ffffff; font-size: 14px; line-height: 1.4;">
 <div style="max-width: 1160px; margin: 0 auto; padding: 8px clamp(16px, 4vw, 40px); display: flex; flex-wrap: wrap; gap: 6px 20px; align-items: center; justify-content: space-between; box-sizing: border-box;">
 <p style="margin: 0; min-width: 0; font-weight: 600;">Online FitCoach in Nederland en België</p>
-<a href="/#kennismaken" style="flex: none; background: #ffffff; color: #0e7580; padding: 6px 16px; border-radius: 999px; font-weight: 700; font-size: 14px;">Gratis kennismaking</a>
+<a class="dc-bar-btn" href="/#kennismaken" style="flex: none; background: #ffffff; color: #0e7580; padding: 6px 16px; border-radius: 999px; font-weight: 700; font-size: 14px;">Gratis kennismaking</a><script>(function(){if(new Date()<new Date("2026-12-25T00:00:00+01:00"))document.querySelectorAll(".dc-bar-btn").forEach(function(b){b.style.display="none"});})();</script>
 </div>
 </div>
 
@@ -287,9 +287,10 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 <input id="dc-naam" name="voornaam" class="dc-in" type="text" autocomplete="given-name" required>
 <label for="dc-mail" style="display: block; font-weight: 600; margin: 18px 0 6px;">E-mailadres</label>
 <input id="dc-mail" name="email" class="dc-in" type="email" autocomplete="email" inputmode="email" required>
+<label for="dc-optin" style="display: flex; gap: 12px; align-items: flex-start; margin: 18px 0 0; font-size: 15px; line-height: 1.45; cursor: pointer;"><input id="dc-optin" name="optin" type="checkbox" style="flex: none; width: 22px; height: 22px; margin: 1px 0 0; accent-color: #0e7580; cursor: pointer;"><span>Ja, ik wil na de challenge ook tips, recepten en aanbiedingen van Mirlande per mail ontvangen.</span></label>
 <p id="dc-err" class="dc-err" role="alert"></p>
 <button type="submit" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; background: #0e7580; color: #ffffff; padding: 13px 28px; border-radius: 999px; font-size: 17px; font-weight: 600; line-height: 1.3; border: 0; cursor: pointer; min-height: 50px; width: 100%; margin-top: 14px;">Doe gratis mee</button>
-<p style="margin: 14px 0 0; font-size: 13px; color: #3d5f63;">Je gegevens gebruik ik alleen voor deze challenge. Lees mijn <a href="https://drive.google.com/file/d/19xrLmwKiqtJJMl2PzHzuhKj-n2Kn9Sa9/view" target="_blank" rel="noopener" style="text-decoration: underline;">privacyverklaring</a>.</p>
+<p style="margin: 14px 0 0; font-size: 13px; color: #3d5f63;">Je e-mailadres gebruik ik voor deze challenge. Heb je het vakje aangevinkt, dan mail ik je daarna af en toe; afmelden kan in elke mail met één klik. Lees mijn <a href="https://drive.google.com/file/d/19xrLmwKiqtJJMl2PzHzuhKj-n2Kn9Sa9/view" target="_blank" rel="noopener" style="text-decoration: underline;">privacyverklaring</a>.</p>
 </form>
 </div>
 </div>
@@ -401,7 +402,7 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { err.textContent = 'Vul een geldig e-mailadres in.'; form.email.focus(); return; }
     err.textContent = '';
     var btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Even geduld…';
-    var payload = { naam: naam, email: email, doel: 'December-challenge: In Balans December Door', toestemming: 'aanmelding challenge via mirlande.nl/december', bron: 'december-challenge' };
+    var payload = { naam: naam, email: email, doel: 'December-challenge: In Balans December Door', toestemming: form.optin.checked ? 'JA: mail na challenge (vinkje aangevinkt op ' + new Date().toLocaleString('nl-NL') + ')' : 'nee: alleen challenge', bron: 'december-challenge' };
     var done = function () {
       var link = WHATSAPP_URL
         ? '<a href="' + WHATSAPP_URL + '" target="_blank" rel="noopener" style="display:inline-block;background:#0e7580;color:#fff;padding:14px 28px;border-radius:999px;font-size:17px;font-weight:600;margin-top:16px">Open de WhatsApp-community</a><p style="margin:10px 0 0;font-size:14px;color:#3d5f63">Vraag in de community om lid te worden. Na een kort WhatsApp-contact keur ik je aanvraag goed.</p>'
@@ -409,6 +410,13 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
       root.innerHTML = '<p style="margin:0;font-size:22px;font-weight:700;color:#142836">Gelukt, ' + naam.replace(/[<>&"]/g, '') + '!</p><p style="margin:8px 0 0;font-size:17px;color:#142836">Je doet mee met In Balans December Door. Op dinsdag 1 december om 7:00 open je je eerste vakje.</p>' + link;
       root.setAttribute('tabindex', '-1'); root.focus();
     };
+    if (form.optin.checked) {
+      // Laposta-lijst "December-challenge 2026": alleen bij aangevinkte toestemming
+      var lp = new URLSearchParams();
+      lp.append('next', ''); lp.append('a', 'pmnqjip8ww'); lp.append('l', 'qo2wkrn8en');
+      lp.append('I0Jda6us8D', email); lp.append('S5HcfZFcsV', naam);
+      try { fetch('https://met-mirlande-in-balans.email-provider.eu/subscribe/post/index.php', { method: 'POST', mode: 'no-cors', body: lp }); } catch (x) {}
+    }
     var ep = window.FITCHECK_FORM_ENDPOINT || '';
     if (!ep) { setTimeout(done, 400); return; }
     fetch(ep, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
