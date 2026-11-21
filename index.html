@@ -105,6 +105,19 @@ button{font-family:inherit}
 h1,h2{font-family:'Anton','Poppins',system-ui,sans-serif!important;font-weight:400!important;text-transform:uppercase;letter-spacing:.01em}
 .hand{font-family:'Caveat',cursive!important;text-transform:none!important;letter-spacing:0!important;font-size:28px!important;line-height:1.1;font-weight:700!important}
 a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{outline:3px solid #142836;outline-offset:2px}
+
+.adv{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.adv span{aspect-ratio:1;border-radius:12px;background:#ffffff;border:1.5px solid #bfdfe2;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:clamp(13px,1.6vw,17px);color:#0e7580}
+.adv span.on{background:#0e7580;border-color:#0e7580;color:#ffffff;box-shadow:0 6px 16px rgba(14,117,128,.28)}
+.adv.sm{gap:6px}.adv.sm span{border-radius:9px;font-size:13px}
+@keyframes advpop{0%{transform:scale(1)}40%{transform:scale(1.12)}100%{transform:scale(1)}}
+.adv span.on{animation:advpop 1.6s ease-in-out 1s 2 both}
+@media (prefers-reduced-motion:reduce){.adv span.on{animation:none}}
+.dc-in{width:100%;box-sizing:border-box;border:1.5px solid #bfdfe2;border-radius:14px;padding:13px 16px;font:inherit;font-size:17px;color:#142836;background:#ffffff;min-height:50px}
+.dc-in:focus{border-color:#0e7580;outline:none;box-shadow:0 0 0 3px rgba(14,117,128,.2)}
+.dc-hide-sm{}
+@media (max-width:760px){.dc-hide-sm{display:none!important}}
+.dc-err{color:#a3271f;font-size:14px;margin:6px 0 0}
 </style>
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <script>window.FITCHECK_FORM_ENDPOINT = "https://script.google.com/macros/s/AKfycbxODlnLgRxBaoKyf_BtN9MAQGblBalcwOuvrIgy1JIBCer6H0fvJejjCNY9IT6y9Qmf/exec"; /* URL van het Google Apps Script voor de vragenlijst */</script>
@@ -176,6 +189,26 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
 </div>
 </div>
 </section>
+
+<!-- December-challenge -->
+<section id="december" data-until="2026-12-25T00:00:00+01:00" style="background: #ffffff;">
+<div style="max-width: 1160px; margin: 0 auto; padding: 0 clamp(16px, 4vw, 40px) clamp(40px, 6vw, 72px); box-sizing: border-box;">
+<div style="background: #e6f5f6; border: 1.5px solid #bfdfe2; border-radius: 28px; padding: clamp(24px, 4vw, 40px); display: flex; flex-wrap: wrap; gap: 28px 40px; align-items: center;">
+<div style="flex: 1 1 420px; min-width: 0;">
+<p class="hand" style="margin: 0 0 6px; color: #0e7580;">Gratis challenge · start dinsdag 1 december</p>
+<h2 style="margin: 0 0 10px; font-size: clamp(26px, 3.4vw, 38px); line-height: 1.15; color: #142836;">In Balans December Door</h2>
+<p style="margin: 0 0 6px; font-size: 18px; font-weight: 600; color: #142836;">Geniet van december, begin januari met een voorsprong.</p>
+<p style="margin: 0 0 22px; font-size: 16px; color: #3d5f63; max-width: 560px;">Een adventskalender voor jezelf: 24 dagen lang elke ochtend één kleine actie van maximaal 5 minuten, in een WhatsApp-community met vrouwen van 40+. Geen dieet: pepernoten en kerstdiner mogen gewoon.</p>
+<a href="/december/" style="display: inline-flex; align-items: center; justify-content: center; box-sizing: border-box; background: #0e7580; color: #ffffff; padding: 13px 28px; border-radius: 999px; font-size: 17px; font-weight: 600; line-height: 1.3; border: 0; cursor: pointer; min-height: 50px;">Doe gratis mee</a>
+</div>
+<div class="dc-hide-sm" style="flex: 0 1 300px; min-width: 220px; margin: 0 auto;">
+<div class="adv sm" aria-hidden="true"><span class="on">1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span><span>9</span><span>10</span><span>11</span><span>12</span><span>13</span><span>14</span><span>15</span><span>16</span><span>17</span><span>18</span><span>19</span><span>20</span><span>21</span><span>22</span><span>23</span><span>24</span></div>
+</div>
+</div>
+</div>
+<script>(function(){var s=document.getElementById('december');if(s&&new Date()>=new Date(s.getAttribute('data-until')))s.remove();})();</script>
+</section>
+<!-- /December-challenge -->
 
 <!-- Herken je dit -->
 <section id="herken" style="background: #fff8c2;">
