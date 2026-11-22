@@ -406,8 +406,8 @@ a:focus-visible,button:focus-visible,input:focus-visible,textarea:focus-visible{
     var payload = { naam: naam, email: email, doel: 'December-challenge: In Balans December Door', toestemming: form.optin.checked ? 'JA: mail na challenge (vinkje aangevinkt op ' + new Date().toLocaleString('nl-NL') + ')' : 'nee: alleen challenge', bron: 'december-challenge' };
     var done = function () {
       var link = WHATSAPP_URL
-        ? '<a href="' + WHATSAPP_URL + '" target="_blank" rel="noopener" style="display:inline-block;background:#0e7580;color:#fff;padding:14px 28px;border-radius:999px;font-size:17px;font-weight:600;margin-top:16px">Open de WhatsApp-community</a><p style="margin:10px 0 0;font-size:14px;color:#3d5f63">Vraag in de community om lid te worden. Na een kort WhatsApp-contact keur ik je aanvraag goed.</p>'
-        : '<p style="margin:12px 0 0;color:#3d5f63">Je ontvangt van mij de link naar de WhatsApp-community. Vraag daar om lid te worden. Na een kort WhatsApp-contact keur ik je aanvraag goed.</p>';
+        ? '<a href="' + WHATSAPP_URL + '" target="_blank" rel="noopener" style="display:inline-block;background:#0e7580;color:#fff;padding:14px 28px;border-radius:999px;font-size:17px;font-weight:600;margin-top:16px">Open de WhatsApp-community</a><p style="margin:10px 0 0;font-size:14px;color:#3d5f63">Vraag in de community om lid te worden. Ik keur elke aanvraag zelf goed, dus dat kan even duren.</p>'
+        : '<p style="margin:12px 0 0;color:#3d5f63">Je ontvangt van mij de link naar de WhatsApp-community. Vraag daar om lid te worden. Ik keur elke aanvraag zelf goed, dus dat kan even duren.</p>';
       root.innerHTML = '<p style="margin:0;font-size:22px;font-weight:700;color:#142836">Gelukt, ' + naam.replace(/[<>&"]/g, '') + '!</p><p style="margin:8px 0 0;font-size:17px;color:#142836">Je doet mee met In Balans December Door. Op dinsdag 1 december om 7:00 open je je eerste vakje.</p>' + link;
       root.setAttribute('tabindex', '-1'); root.focus();
     };
