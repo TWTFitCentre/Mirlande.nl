@@ -60,9 +60,10 @@ button:focus-visible,a:focus-visible{outline:3px solid #142836;outline-offset:2p
 <script>
 (function () {
   var ENDPOINT = "https://script.google.com/macros/s/AKfycbxODlnLgRxBaoKyf_BtN9MAQGblBalcwOuvrIgy1JIBCer6H0fvJejjCNY9IT6y9Qmf/exec";
-  // Laposta: pas hier aan als er een algemene nieuwsbrieflijst komt (ook in /cadeau/).
-  var LAPOSTA = { a: 'pmnqjip8ww', l: 'qo2wkrn8en', email: 'I0Jda6us8D', naam: 'S5HcfZFcsV' };
+  // Laposta-lijst "Mailinglijst FitCoach Mirlande" (zelfde als /cadeau/)
+  var LAPOSTA = { a: 'pmnqjip8ww', l: 'hmsrocnjrd', email: 'xz2vwjgkD7', voornaam: '9LzuPeuZ03', achternaam: 'xZRrrLAciJ' };
   var form = document.getElementById('form');
+  var BRON = ((new URLSearchParams(location.search).get('bron') || 'tips').toLowerCase().replace(/[^a-z0-9-]/g, '').slice(0, 30)) || 'tips';
   form.addEventListener('submit', function (e) {
     e.preventDefault();
     var fout = document.getElementById('fout');
@@ -72,7 +73,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #142836;outline-offset:2p
     fout.textContent = '';
     var btn = form.querySelector('button'); btn.disabled = true; btn.textContent = 'Even geduld…';
     var payload = { naam: naam, email: email, doel: 'Aanmelding tips per mail',
-      toestemming: 'JA: aangemeld via mirlande.nl/tips op ' + new Date().toLocaleString('nl-NL'), bron: 'tips' };
+      toestemming: 'JA: aangemeld via mirlande.nl/tips op ' + new Date().toLocaleString('nl-NL'), bron: BRON };
     var klaar = function () {
       var kaart = document.getElementById('kaart');
       kaart.innerHTML = '<h1>Top, ' + naam.split(' ')[0].replace(/[<>&"]/g, '') + ', je staat erop!</h1><p>Je hoort binnenkort van me. Afmelden kan altijd onderaan elke mail.</p><p><a href="/">Terug naar de website</a></p>';
@@ -80,7 +81,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #142836;outline-offset:2p
     };
     var lp = new URLSearchParams();
     lp.append('next', ''); lp.append('a', LAPOSTA.a); lp.append('l', LAPOSTA.l);
-    lp.append(LAPOSTA.email, email); lp.append(LAPOSTA.naam, naam);
+    var delen = naam.split(/\s+/); lp.append(LAPOSTA.email, email); lp.append(LAPOSTA.voornaam, delen.shift()); lp.append(LAPOSTA.achternaam, delen.join(' '));
     try { fetch('https://met-mirlande-in-balans.email-provider.eu/subscribe/post/index.php', { method: 'POST', mode: 'no-cors', body: lp }); } catch (x) {}
     fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
       .then(klaar, klaar);

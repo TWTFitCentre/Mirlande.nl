@@ -86,8 +86,8 @@ button:focus-visible,a:focus-visible{outline:3px solid #142836;outline-offset:2p
 <script>
 (function () {
   var ENDPOINT = "https://script.google.com/macros/s/AKfycbxODlnLgRxBaoKyf_BtN9MAQGblBalcwOuvrIgy1JIBCer6H0fvJejjCNY9IT6y9Qmf/exec";
-  // Laposta: zelfde lijst als /tips/. Pas hier aan als er een algemene nieuwsbrieflijst komt.
-  var LAPOSTA = { a: 'pmnqjip8ww', l: 'qo2wkrn8en', email: 'I0Jda6us8D', naam: 'S5HcfZFcsV' };
+  // Laposta-lijst "Mailinglijst FitCoach Mirlande" (zelfde als /tips/)
+  var LAPOSTA = { a: 'pmnqjip8ww', l: 'hmsrocnjrd', email: 'xz2vwjgkD7', voornaam: '9LzuPeuZ03', achternaam: 'xZRrrLAciJ' };
   var BOEK_LOCATIE = "https://calendar.app.google/WVTdUK2U2dFTE8UY6";
   var BOEK_ONLINE = "https://calendar.app.google/zRwHsRfvWfqfAEaYA";
   var esc = function (t) { return String(t).replace(/[<>&"]/g, ''); };
@@ -128,7 +128,7 @@ button:focus-visible,a:focus-visible{outline:3px solid #142836;outline-offset:2p
     if (form.optin.checked) {
       var lp = new URLSearchParams();
       lp.append('next', ''); lp.append('a', LAPOSTA.a); lp.append('l', LAPOSTA.l);
-      lp.append(LAPOSTA.email, email); lp.append(LAPOSTA.naam, naam);
+      var delen = naam.split(/\s+/); lp.append(LAPOSTA.email, email); lp.append(LAPOSTA.voornaam, delen.shift()); lp.append(LAPOSTA.achternaam, delen.join(' '));
       try { fetch('https://met-mirlande-in-balans.email-provider.eu/subscribe/post/index.php', { method: 'POST', mode: 'no-cors', body: lp }); } catch (x) {}
     }
     fetch(ENDPOINT, { method: 'POST', mode: 'no-cors', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload) })
