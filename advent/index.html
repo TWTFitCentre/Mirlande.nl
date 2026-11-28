@@ -95,6 +95,9 @@ button:focus-visible{outline:3px solid var(--geel);outline-offset:3px}
 .stap{transform-box:fill-box;transform-origin:50% 0;animation:stap .5s ease-in-out infinite alternate}
 .stap.b{animation-direction:alternate-reverse}
 @keyframes stap{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
+.muziek{position:fixed;top:calc(12px + env(safe-area-inset-top));right:12px;z-index:15;width:46px;height:46px;border-radius:50%;border:1.5px solid rgba(255,255,255,.3);background:rgba(20,40,54,.75);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.muziek.aan{background:var(--geel);color:var(--navy);border-color:var(--geel)}
+.proef:not([hidden])~.muziek{top:44px}
 .vak.flits .bin{animation:flits .8s ease-out}
 @keyframes flits{0%{box-shadow:0 0 0 0 rgba(255,248,194,.9)}100%{box-shadow:0 0 0 18px rgba(255,248,194,0)}}
 @media (prefers-reduced-motion:reduce){.sneeuw,.sterren{display:none}.vak .deur{transition:none}.vak.vandaag .deur{animation:none}}
@@ -104,6 +107,7 @@ button:focus-visible{outline:3px solid var(--geel);outline-offset:3px}
 <div class="sterren" aria-hidden="true"></div>
 <div class="sneeuw" aria-hidden="true"></div>
 <div class="proef" id="proef" hidden></div>
+<button class="muziek" id="muziek" aria-label="Muziek aanzetten" aria-pressed="false">🔈</button>
 <main>
   <header>
     <p class="hand">Geniet van december, begin januari met een voorsprong</p>
@@ -256,7 +260,7 @@ function klik(i,b){
     geopend.add(i); opslag.zet('ibdd-geopend',[...geopend]); tel('open',i);
     b.classList.remove('vandaag'); b.classList.add('open','flits');
     const r=b.getBoundingClientRect();
-    setTimeout(()=>uitbarsting(r.left+r.width/2, r.top+r.height/2, 26),250);
+    setTimeout(()=>{ uitbarsting(r.left+r.width/2, r.top+r.height/2, 26); belletje(); },250);
     if(i===24 && isKerst()) setTimeout(sleeVliegt,1600);
     setTimeout(()=>toon(i),1050);
   } else toon(i);
@@ -396,6 +400,57 @@ function loperLoopt(){
 }
 setTimeout(loperLoopt,5000);
 setInterval(loperLoopt,120000);
+
+/* ===================== SPEELDOOSMUZIEK =====================
+   Zelf gespeeld met de browser, geen opnames. Alleen oude, rechtenvrije liedjes.
+   Notatie: noot+octaaf en lengte in tellen, "-" = rust. Standaard UIT. */
+const LIEDJES_SINT = [
+  {naam:'Sinterklaas kapoentje', tempo:132, noten:
+   'G4 1,G4 1,A4 1,A4 1,G4 1,E4 2,- 1,G4 1,G4 1,A4 1,A4 1,G4 1,E4 2,- 1,G4 1,G4 1,F4 1,F4 1,E4 1,E4 2,- 1,D4 1,D4 1,E4 1,D4 1,C4 3,- 1'}
+];
+const LIEDJES_KERST = [
+  {naam:'Jingle Bells', tempo:200, noten:
+   'E5 1,E5 1,E5 2,E5 1,E5 1,E5 2,E5 1,G5 1,C5 1.5,D5 .5,E5 4,F5 1,F5 1,F5 1.5,F5 .5,F5 1,E5 1,E5 1,E5 .5,E5 .5,E5 1,D5 1,D5 1,E5 1,D5 2,G5 2,'+
+   'E5 1,E5 1,E5 2,E5 1,E5 1,E5 2,E5 1,G5 1,C5 1.5,D5 .5,E5 4,F5 1,F5 1,F5 1.5,F5 .5,F5 1,E5 1,E5 1,E5 .5,E5 .5,G5 1,G5 1,F5 1,D5 1,C5 4,- 2'},
+  {naam:'We Wish You a Merry Christmas', tempo:170, noten:
+   'G4 1,C5 1,C5 .5,D5 .5,C5 .5,B4 .5,A4 1,A4 1,A4 1,D5 1,D5 .5,E5 .5,D5 .5,C5 .5,B4 1,G4 1,G4 1,E5 1,E5 .5,F5 .5,E5 .5,D5 .5,C5 1,A4 1,G4 .5,G4 .5,A4 1,D5 1,B4 1,C5 3,- 2'}
+];
+const NOOT = {C:-9,D:-7,E:-5,F:-4,G:-2,A:0,B:2};
+function freq(n){ const m=n.match(/^([A-G])(#?)(\d)$/); return 440*Math.pow(2,(NOOT[m[1]]+(m[2]?1:0)+(+m[3]-4)*12)/12); }
+let ac=null, master=null, muziekAan=false, lied=0, volgende=0, timer=null;
+try{ muziekAan = localStorage.getItem('ibdd-muziek')==='aan'; }catch(e){}
+function audio(){
+  if(!ac){ const C=window.AudioContext||window.webkitAudioContext; if(!C) return null; ac=new C();
+    master=ac.createGain(); master.gain.value=.22; const lp=ac.createBiquadFilter(); lp.type='lowpass'; lp.frequency.value=3200; master.connect(lp); lp.connect(ac.destination); }
+  if(ac.state==='suspended') ac.resume();
+  return ac;
+}
+function tingel(f,t,duur){
+  const o1=ac.createOscillator(), o2=ac.createOscillator(), g=ac.createGain();
+  o1.type='sine'; o1.frequency.value=f; o2.type='triangle'; o2.frequency.value=f*2;
+  const g2=ac.createGain(); g2.gain.value=.25; o2.connect(g2); g2.connect(g); o1.connect(g); g.connect(master);
+  const uit=Math.max(.6,duur*1.6);
+  g.gain.setValueAtTime(0,t); g.gain.linearRampToValueAtTime(.9,t+.008); g.gain.exponentialRampToValueAtTime(.001,t+uit);
+  o1.start(t); o2.start(t); o1.stop(t+uit+.05); o2.stop(t+uit+.05);
+}
+function speelLied(){
+  if(!muziekAan || !ac) return;
+  const lijst=isKerst()?LIEDJES_KERST:LIEDJES_SINT, l=lijst[lied%lijst.length], tel=60/l.tempo;
+  let t=Math.max(ac.currentTime+.1, volgende);
+  l.noten.split(',').forEach(s=>{ const [n,d]=s.trim().split(' '); const dur=parseFloat(d)*tel; if(n!=='-') tingel(freq(n),t,dur); t+=dur; });
+  volgende=t+1.5; lied++;
+  timer=setTimeout(speelLied, Math.max(0,(volgende-ac.currentTime-.4)*1000));
+}
+function belletje(){ if(!muziekAan || !ac) return; const t=ac.currentTime+.02; ['C6','E6','G6','C7'].forEach((n,k)=>tingel(freq(n),t+k*.07,.3)); }
+function muziekKnop(){ const b=$('muziek'); b.classList.toggle('aan',muziekAan); b.textContent=muziekAan?'🔊':'🔈'; b.setAttribute('aria-pressed',muziekAan); b.setAttribute('aria-label',muziekAan?'Muziek uitzetten':'Muziek aanzetten'); }
+function startMuziek(){ if(!audio()) return; clearTimeout(timer); volgende=0; speelLied(); }
+function stopMuziek(){ clearTimeout(timer); if(ac){ master.gain.cancelScheduledValues(ac.currentTime); master.gain.setValueAtTime(master.gain.value,ac.currentTime); master.gain.linearRampToValueAtTime(0,ac.currentTime+.3);
+  const oud=master; setTimeout(()=>{ oud.disconnect(); },400); ac.close(); ac=null; } }
+$('muziek').addEventListener('click',e=>{ e.stopPropagation(); muziekAan=!muziekAan; try{localStorage.setItem('ibdd-muziek',muziekAan?'aan':'uit')}catch(er){}; muziekKnop(); muziekAan?startMuziek():stopMuziek(); });
+/* Stond de muziek de vorige keer aan? Dan start hij bij de eerste tik (telefoons eisen een tik). */
+if(muziekAan) document.addEventListener('pointerdown',function eerst(e){ if(e.target.closest('#muziek')) return; document.removeEventListener('pointerdown',eerst); if(muziekAan && !ac) startMuziek(); });
+document.addEventListener('visibilitychange',()=>{ if(!ac) return; document.hidden?ac.suspend():ac.resume(); });
+muziekKnop();
 
 /* Sneeuw (een beetje, naast de sterren) */
 (function(){ const s=document.querySelector('.sneeuw'); for(let k=0;k<12;k++){ const f=document.createElement('i'); const z=2+Math.random()*5; f.style.cssText='left:'+Math.random()*100+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+(9+Math.random()*12)+'s;animation-delay:-'+Math.random()*20+'s;--dx:'+(Math.random()*60-30)+'px'; s.appendChild(f);} })();
