@@ -139,7 +139,14 @@ const VAKJES = [
  {emo:"✨",titel:"Je hebt het gedaan!",tekst:"Alle 24 vakjes. Lees je zin van vakje 1 nog eens: waarom deed je mee? En dan: geniet, zonder schuldgevoel. Fijne kerstdagen! ❤️",actie:"Schrijf onder je zin hoe jij op 2 januari wilt beginnen. Niet opnieuw, maar verder.",extra:"🎁 Extraatje in de groep: een persoonlijk bedankfilmpje van Mirlande.",check:"🎄✨ als feestelijke afsluiting."}
 ];
 
-/* ================================================================ */
+/* ================================================================
+   ANONIEM TELLEN
+   Plak hieronder de web-app-URL van je Google Apps Script.
+   Leeg = er wordt niets verstuurd. Er gaan geen namen of nummers mee,
+   alleen een willekeurige code per telefoon.
+   ================================================================ */
+const TEL_URL = '';
+
 const JAAR = 2026, UUR_OPEN = 7;
 const DAGEN = ['zo','ma','di','wo','do','vr','za'];
 const $ = id => document.getElementById(id);
@@ -166,6 +173,18 @@ function openTot(n){
   return n.u>=UUR_OPEN ? n.d : n.d-1;
 }
 function datumLabel(i){ const dt=new Date(JAAR,11,i); return DAGEN[dt.getDay()]+' '+i+' december'; }
+
+const PROEF = new URLSearchParams(location.search).has('datum');
+function apparaat(){
+  try{ let id=localStorage.getItem('ibdd-id'); if(!id){ id=Math.random().toString(36).slice(2,10)+Date.now().toString(36).slice(-4); localStorage.setItem('ibdd-id',id); } return id; }catch(e){ return 'onbekend'; }
+}
+function tel(gebeurtenis, vakje){
+  if(!TEL_URL || PROEF) return;
+  const body = JSON.stringify({g:gebeurtenis, v:vakje||0, id:apparaat()});
+  try{ fetch(TEL_URL,{method:'POST',mode:'no-cors',keepalive:true,headers:{'Content-Type':'text/plain;charset=utf-8'},body}); }catch(e){}
+}
+/* Eén keer per dag per telefoon een bezoek tellen */
+(function(){ const n=nuNL(), dag=n.j+'-'+n.m+'-'+n.d; try{ if(localStorage.getItem('ibdd-bezoek')!==dag){ localStorage.setItem('ibdd-bezoek',dag); tel('bezoek'); } }catch(e){ tel('bezoek'); } })();
 
 const geopend = new Set(opslag.lees('ibdd-geopend'));
 const gedaan = new Set(opslag.lees('ibdd-gedaan'));
@@ -210,7 +229,7 @@ function klik(i,b){
     return;
   }
   if(!geopend.has(i)){
-    geopend.add(i); opslag.zet('ibdd-geopend',[...geopend]);
+    geopend.add(i); opslag.zet('ibdd-geopend',[...geopend]); tel('open',i);
     b.classList.remove('vandaag'); b.classList.add('open');
     setTimeout(()=>toon(i),650);
   } else toon(i);
@@ -232,7 +251,7 @@ function toon(i){
 }
 function knopStand(){ const k=$('k-gedaan'), d=gedaan.has(actief); k.textContent=d?'Gedaan ✓ (ongedaan maken)':'Ik heb het gedaan ✓'; k.classList.toggle('klaar',d); }
 $('k-gedaan').addEventListener('click',()=>{
-  if(gedaan.has(actief)) gedaan.delete(actief); else { gedaan.add(actief); melding(gedaan.size===24?'Alle 24! Wat ben ik trots op je ❤️':'Top! Vergeet je check-in in de groep niet.'); }
+  if(gedaan.has(actief)){ gedaan.delete(actief); tel('ongedaan',actief); } else { tel('gedaan',actief); gedaan.add(actief); melding(gedaan.size===24?'Alle 24! Wat ben ik trots op je ❤️':'Top! Vergeet je check-in in de groep niet.'); }
   opslag.zet('ibdd-gedaan',[...gedaan]); knopStand(); teken();
 });
 function sluit(){ $('scherm').classList.remove('aan'); }
