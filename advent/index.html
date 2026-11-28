@@ -74,10 +74,34 @@ h1{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;lette
 .melding.aan{opacity:1;transform:translate(-50%,0)}
 .proef{background:var(--koraal);color:#fff;text-align:center;font-size:13px;font-weight:600;padding:6px;position:relative;z-index:2}
 button:focus-visible{outline:3px solid var(--geel);outline-offset:3px}
-@media (prefers-reduced-motion:reduce){.sneeuw{display:none}.vak .deur{transition:none}.vak.vandaag .deur{animation:none}}
+/* sterren */
+.sterren{position:fixed;inset:0;pointer-events:none;z-index:0}
+.sterren b{position:absolute;border-radius:50%;background:#fff;animation:twinkel ease-in-out infinite}
+.sterren b.groot{border-radius:0;background:var(--geel);clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
+@keyframes twinkel{0%,100%{opacity:.15;transform:scale(.6)}50%{opacity:1;transform:scale(1)}}
+/* deeltjes */
+.deeltje{position:fixed;z-index:30;pointer-events:none;will-change:transform,opacity}
+.deeltje.ster{clip-path:polygon(50% 0,62% 38%,100% 50%,62% 62%,50% 100%,38% 62%,0 50%,38% 38%)}
+.deeltje.pepernoot{border-radius:50%;background:radial-gradient(circle at 35% 30%,#c98a4b,#8a5226 60%,#6b3d1b);box-shadow:inset -1px -1px 2px rgba(0,0,0,.3)}
+/* slee */
+.slee{position:fixed;top:14vh;left:0;width:250px;z-index:25;pointer-events:none;will-change:transform}
+.galop{transform-box:fill-box;transform-origin:50% 0;animation:galop .32s ease-in-out infinite alternate}
+.galop.b{animation-delay:-.16s}
+@keyframes galop{from{transform:skewX(-16deg)}to{transform:skewX(16deg)}}
+/* lopende kerstman */
+.loper{position:fixed;bottom:0;left:0;width:64px;z-index:5;pointer-events:none;will-change:transform}
+.loper svg{display:block;animation:dobber .5s ease-in-out infinite alternate}
+@keyframes dobber{to{transform:translateY(-3px)}}
+.stap{transform-box:fill-box;transform-origin:50% 0;animation:stap .5s ease-in-out infinite alternate}
+.stap.b{animation-direction:alternate-reverse}
+@keyframes stap{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
+.vak.flits .bin{animation:flits .8s ease-out}
+@keyframes flits{0%{box-shadow:0 0 0 0 rgba(255,248,194,.9)}100%{box-shadow:0 0 0 18px rgba(255,248,194,0)}}
+@media (prefers-reduced-motion:reduce){.sneeuw,.sterren{display:none}.vak .deur{transition:none}.vak.vandaag .deur{animation:none}}
 </style>
 </head>
 <body>
+<div class="sterren" aria-hidden="true"></div>
 <div class="sneeuw" aria-hidden="true"></div>
 <div class="proef" id="proef" hidden></div>
 <main>
@@ -230,8 +254,11 @@ function klik(i,b){
   }
   if(!geopend.has(i)){
     geopend.add(i); opslag.zet('ibdd-geopend',[...geopend]); tel('open',i);
-    b.classList.remove('vandaag'); b.classList.add('open');
-    setTimeout(()=>toon(i),650);
+    b.classList.remove('vandaag'); b.classList.add('open','flits');
+    const r=b.getBoundingClientRect();
+    setTimeout(()=>uitbarsting(r.left+r.width/2, r.top+r.height/2, 26),250);
+    if(i===24 && isKerst()) setTimeout(sleeVliegt,1600);
+    setTimeout(()=>toon(i),1050);
   } else toon(i);
 }
 
@@ -251,7 +278,9 @@ function toon(i){
 }
 function knopStand(){ const k=$('k-gedaan'), d=gedaan.has(actief); k.textContent=d?'Gedaan ✓ (ongedaan maken)':'Ik heb het gedaan ✓'; k.classList.toggle('klaar',d); }
 $('k-gedaan').addEventListener('click',()=>{
-  if(gedaan.has(actief)){ gedaan.delete(actief); tel('ongedaan',actief); } else { tel('gedaan',actief); gedaan.add(actief); melding(gedaan.size===24?'Alle 24! Wat ben ik trots op je ❤️':'Top! Vergeet je check-in in de groep niet.'); }
+  if(gedaan.has(actief)){ gedaan.delete(actief); tel('ongedaan',actief); } else { tel('gedaan',actief);
+    const r=$('k-gedaan').getBoundingClientRect(); uitbarsting(r.left+r.width/2, r.top, 18);
+    setTimeout(()=>{ sluit(); isKerst() ? sleeVliegt() : pepernotenregen(); },700); gedaan.add(actief); melding(gedaan.size===24?'Alle 24! Wat ben ik trots op je ❤️':'Top! Vergeet je check-in in de groep niet.'); }
   opslag.zet('ibdd-gedaan',[...gedaan]); knopStand(); teken();
 });
 function sluit(){ $('scherm').classList.remove('aan'); }
@@ -259,8 +288,117 @@ $('k-sluit').addEventListener('click',sluit);
 $('scherm').addEventListener('click',e=>{ if(e.target.id==='scherm') sluit(); });
 document.addEventListener('keydown',e=>{ if(e.key==='Escape') sluit(); });
 
-/* Sneeuw */
-(function(){ const s=document.querySelector('.sneeuw'); for(let k=0;k<28;k++){ const f=document.createElement('i'); const z=2+Math.random()*5; f.style.cssText='left:'+Math.random()*100+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+(9+Math.random()*12)+'s;animation-delay:-'+Math.random()*20+'s;--dx:'+(Math.random()*60-30)+'px'; s.appendChild(f);} })();
+/* ===================== ANIMATIES ===================== */
+const RUSTIG = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const isKerst = () => nu.j>JAAR || (nu.j===JAAR && nu.m===12 && nu.d>=6);   /* tot en met 5 dec: Sinterklaas */
+const rnd = (a,b) => a+Math.random()*(b-a);
+
+/* Twinkelende sterren */
+(function(){ const s=document.querySelector('.sterren'); for(let k=0;k<70;k++){ const b=document.createElement('b'); const groot=k%9===0; const z=groot?rnd(9,14):rnd(1.5,3.2);
+  if(groot) b.className='groot';
+  b.style.cssText+='left:'+rnd(0,100)+'%;top:'+rnd(0,100)+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+rnd(2,5)+'s;animation-delay:-'+rnd(0,5)+'s';
+  s.appendChild(b);} })();
+
+/* Uitbarsting: sterretjes (kerst) of pepernoten (Sinterklaas) */
+function uitbarsting(x,y,aantal){
+  if(RUSTIG) return;
+  const pep=!isKerst(), kleuren=['#fff8c2','#ffd966','#ff654e','#ffffff','#1399a3'];
+  for(let k=0;k<aantal;k++){
+    const d=document.createElement('span'); const z=pep?rnd(8,13):rnd(7,15);
+    d.className='deeltje '+(pep?'pepernoot':'ster');
+    d.style.cssText='left:'+(x-z/2)+'px;top:'+(y-z/2)+'px;width:'+z+'px;height:'+z+'px;'+(pep?'':'background:'+kleuren[k%kleuren.length]);
+    document.body.appendChild(d);
+    const hoek=rnd(0,Math.PI*2), afst=rnd(50,130), dx=Math.cos(hoek)*afst, dy=Math.sin(hoek)*afst, val=pep?rnd(120,220):rnd(10,40);
+    d.animate([
+      {transform:'translate(0,0) scale(.3) rotate(0deg)',opacity:1},
+      {transform:'translate('+dx+'px,'+dy+'px) scale(1) rotate('+rnd(90,270)+'deg)',opacity:1,offset:.45},
+      {transform:'translate('+dx*1.15+'px,'+(dy+val)+'px) scale(.5) rotate('+rnd(270,500)+'deg)',opacity:0}
+    ],{duration:rnd(900,1400),easing:'cubic-bezier(.2,.7,.4,1)'}).onfinish=()=>d.remove();
+  }
+}
+
+/* Pepernotenregen (beloning tot en met 5 december) */
+function pepernotenregen(){
+  if(RUSTIG) return;
+  for(let k=0;k<45;k++){
+    const d=document.createElement('span'); const z=rnd(9,15);
+    d.className='deeltje pepernoot';
+    d.style.cssText='left:'+rnd(0,100)+'vw;top:-20px;width:'+z+'px;height:'+z+'px';
+    document.body.appendChild(d);
+    d.animate([{transform:'translate(0,0) rotate(0)'},{transform:'translate('+rnd(-40,40)+'px,'+(innerHeight+40)+'px) rotate('+rnd(200,700)+'deg)'}],
+      {duration:rnd(1600,2800),delay:rnd(0,900),easing:'cubic-bezier(.4,0,.8,.6)',fill:'backwards'}).onfinish=()=>d.remove();
+  }
+}
+
+/* Kerstman met slee en rendieren (eigen tekening) */
+const RENDIER = x => `<g transform="translate(${x} 30)">
+  <g class="galop" stroke="#6b4228" stroke-width="3" stroke-linecap="round"><line x1="5" y1="14" x2="2" y2="28"/><line x1="25" y1="14" x2="29" y2="27"/></g>
+  <g class="galop b" stroke="#5a371f" stroke-width="3" stroke-linecap="round"><line x1="10" y1="14" x2="9" y2="28"/><line x1="29" y1="14" x2="33" y2="27"/></g>
+  <circle cx="1" cy="9" r="2.6" fill="#fff"/>
+  <ellipse cx="17" cy="12" rx="16" ry="8" fill="#8a5a3c"/>
+  <path d="M8 6 Q17 15 27 6" stroke="#ff654e" stroke-width="2.5" fill="none"/>
+  <path d="M29 8 L34 -2" stroke="#8a5a3c" stroke-width="6" stroke-linecap="round"/>
+  <ellipse cx="37" cy="-4" rx="6.5" ry="4.5" fill="#8a5a3c"/>
+  <path d="M34 -7 L31 -16 M32 -12 L28 -14 M37 -8 L38 -17 M38 -13 L42 -15" stroke="#ecdcb0" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+  <circle cx="39.5" cy="-5" r="1" fill="#142836"/></g>`;
+const SLEE_SVG = `<svg viewBox="0 0 270 90" xmlns="http://www.w3.org/2000/svg">
+  <path d="M66 46 Q110 52 150 40 M150 40 Q175 46 192 40 M192 40 Q215 46 232 40" stroke="#fff8c2" stroke-width="1.2" fill="none"/>
+  ${RENDIER(148)}${RENDIER(190)}${RENDIER(232)}
+  <path d="M20 64 V72 M68 64 V72" stroke="#fff8c2" stroke-width="2.5"/>
+  <path d="M8 66 Q2 72 10 74 H76 Q92 74 90 60" stroke="#fff8c2" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <circle cx="22" cy="33" r="12" fill="#1399a3"/><path d="M18 22 Q22 26 27 22" stroke="#0e7580" stroke-width="2" fill="none"/>
+  <ellipse cx="50" cy="38" rx="12" ry="11" fill="#d9302b"/>
+  <path d="M58 35 L71 45" stroke="#d9302b" stroke-width="5" stroke-linecap="round"/><circle cx="71" cy="45" r="2.6" fill="#142836"/>
+  <circle cx="54" cy="22" r="7" fill="#f6cfb1"/>
+  <path d="M47 23 Q54 38 61 23 Z" fill="#fff"/>
+  <path d="M47 18 Q53 4 64 11 L62 18 Z" fill="#d9302b"/><circle cx="64.5" cy="10.5" r="2.6" fill="#fff"/>
+  <rect x="46" y="16.5" width="17" height="4.5" rx="2.2" fill="#fff"/><circle cx="57" cy="21.5" r="1" fill="#142836"/>
+  <path d="M12 40 H70 Q82 40 80 52 L76 64 H18 Q10 64 10 54 Z" fill="#ff654e"/>
+  <path d="M12 46 H79" stroke="#fff8c2" stroke-width="2"/><circle cx="45" cy="55" r="3" fill="#fff8c2"/>
+</svg>`;
+let sleeBezig=false;
+function sleeVliegt(){
+  if(RUSTIG || sleeBezig) return; sleeBezig=true;
+  const s=document.createElement('div'); s.className='slee'; s.innerHTML=SLEE_SVG; document.body.appendChild(s);
+  const W=innerWidth, kf=[];
+  for(let k=0;k<=8;k++){ const t=k/8; kf.push({transform:'translate('+(-270+t*(W+300))+'px,'+(Math.sin(t*Math.PI*2)*22 - t*30)+'px) rotate('+(Math.cos(t*Math.PI*2)*-5)+'deg)'}); }
+  const anim=s.animate(kf,{duration:Math.max(4200,W*7),easing:'linear'});
+  const spoor=setInterval(()=>{ const r=s.getBoundingClientRect(); if(r.right<0) return;
+    const d=document.createElement('span'), z=rnd(4,8); d.className='deeltje ster';
+    d.style.cssText='left:'+(r.left+rnd(4,30))+'px;top:'+(r.top+rnd(55,75))+'px;width:'+z+'px;height:'+z+'px;background:'+(Math.random()<.5?'#fff8c2':'#ffffff');
+    document.body.appendChild(d);
+    d.animate([{opacity:1,transform:'scale(1)'},{opacity:0,transform:'translateY(18px) scale(.2)'}],{duration:900}).onfinish=()=>d.remove();
+  },70);
+  anim.onfinish=()=>{ clearInterval(spoor); s.remove(); sleeBezig=false; };
+}
+
+/* Kerstman die onderaan voorbij loopt (vanaf 6 december, af en toe) */
+const LOPER_SVG = `<svg viewBox="0 0 60 90" xmlns="http://www.w3.org/2000/svg">
+  <g class="stap"><rect x="20" y="62" width="7" height="17" fill="#b52622"/><rect x="18" y="77" width="13" height="7" rx="3" fill="#142836"/></g>
+  <g class="stap b"><rect x="33" y="62" width="7" height="17" fill="#d9302b"/><rect x="31" y="77" width="13" height="7" rx="3" fill="#142836"/></g>
+  <circle cx="13" cy="32" r="12" fill="#1399a3"/><path d="M8 21 Q13 25 18 21" stroke="#0e7580" stroke-width="2" fill="none"/>
+  <path d="M15 36 Q30 22 45 36 L48 62 H12 Z" fill="#d9302b"/>
+  <rect x="11" y="60" width="38" height="5" rx="2.5" fill="#fff"/>
+  <rect x="13" y="49" width="35" height="5" fill="#142836"/><rect x="28" y="48" width="6" height="7" rx="1" fill="#fff8c2"/>
+  <path d="M44 38 Q52 44 50 52" stroke="#d9302b" stroke-width="6" stroke-linecap="round" fill="none"/><circle cx="50" cy="53" r="3" fill="#fff"/>
+  <circle cx="33" cy="23" r="9" fill="#f6cfb1"/>
+  <path d="M23 24 Q33 46 43 24 Z" fill="#fff"/>
+  <path d="M23 18 Q31 1 45 9 L43 17 Z" fill="#d9302b"/><circle cx="46" cy="9" r="3" fill="#fff"/>
+  <rect x="22" y="15" width="22" height="5" rx="2.5" fill="#fff"/>
+  <circle cx="37" cy="22" r="1.2" fill="#142836"/><circle cx="40" cy="25" r="1.8" fill="#f2a98a"/>
+</svg>`;
+let loperBezig=false;
+function loperLoopt(){
+  if(RUSTIG || loperBezig || document.hidden || !isKerst()) return; loperBezig=true;
+  const l=document.createElement('div'); l.className='loper'; l.innerHTML=LOPER_SVG; document.body.appendChild(l);
+  l.animate([{transform:'translateX(-80px)'},{transform:'translateX('+(innerWidth+20)+'px)'}],{duration:Math.max(9000,innerWidth*22),easing:'linear'})
+   .onfinish=()=>{ l.remove(); loperBezig=false; };
+}
+setTimeout(loperLoopt,5000);
+setInterval(loperLoopt,120000);
+
+/* Sneeuw (een beetje, naast de sterren) */
+(function(){ const s=document.querySelector('.sneeuw'); for(let k=0;k<12;k++){ const f=document.createElement('i'); const z=2+Math.random()*5; f.style.cssText='left:'+Math.random()*100+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+(9+Math.random()*12)+'s;animation-delay:-'+Math.random()*20+'s;--dx:'+(Math.random()*60-30)+'px'; s.appendChild(f);} })();
 
 /* Om 7:00 vanzelf het nieuwe vakje tonen, ook als de pagina openstaat */
 setInterval(()=>{ const n=nuNL(), t=openTot(n); if(t!==tot){ nu=n; tot=t; teken(); } },60000);
