@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>In Balans December Door | jouw vakjes</title>
+<meta name="description" content="Open elke ochtend om 7:00 je vakje van In Balans December Door: één kleine actie van maximaal 5 minuten.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#142836">
+<meta property="og:title" content="In Balans December Door: open je vakje">
+<meta property="og:description" content="Elke ochtend om 7:00 een nieuw vakje. Eén actie, maximaal 5 minuten.">
+<meta property="og:image" content="https://mirlande.nl/img/december-kerstbal.jpg">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<style>
+@font-face{font-family:'Anton';font-display:swap;src:url(/fonts/anton-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:400;font-display:swap;src:url(/fonts/poppins-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:600;font-display:swap;src:url(/fonts/poppins-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Poppins';font-weight:700;font-display:swap;src:url(/fonts/poppins-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Caveat';font-weight:700;font-display:swap;src:url(/fonts/caveat-latin-700-normal.woff2) format('woff2')}
+:root{--navy:#142836;--petrol:#0e7580;--petrol-l:#1399a3;--geel:#fff8c2;--koraal:#ff654e;--wit:#fff}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{font-family:'Poppins',system-ui,sans-serif;color:var(--wit);background:var(--navy);min-height:100vh;overflow-x:hidden}
+.sneeuw{position:fixed;inset:0;pointer-events:none;z-index:0}
+.sneeuw i{position:absolute;top:-10px;width:6px;height:6px;border-radius:50%;background:#fff;opacity:.55;animation:val linear infinite}
+@keyframes val{to{transform:translate(var(--dx),105vh)}}
+main{position:relative;z-index:1;max-width:620px;margin:0 auto;padding:28px 16px 40px}
+header{text-align:center;margin-bottom:22px}
+.hand{font-family:'Caveat',cursive;font-weight:700;font-size:28px;color:var(--geel);margin:0}
+h1{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;letter-spacing:.01em;font-size:clamp(34px,10vw,52px);line-height:1;margin:4px 0 10px}
+.sub{margin:0;font-size:15px;opacity:.85}
+.status{margin:18px auto 0;display:inline-block;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.18);border-radius:999px;padding:8px 16px;font-size:14px;font-weight:600}
+.status b{color:var(--geel)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;perspective:900px}
+@media (min-width:520px){.grid{grid-template-columns:repeat(6,1fr)}}
+.vak{position:relative;aspect-ratio:1;border:0;padding:0;background:transparent;cursor:pointer;font:inherit;color:inherit;border-radius:14px}
+.vak .bin,.vak .deur{position:absolute;inset:0;border-radius:14px;display:flex;align-items:center;justify-content:center}
+.vak .bin{background:var(--geel);color:var(--navy);font-size:26px}
+.vak .deur{background:var(--petrol);border:2px solid rgba(255,255,255,.22);transform-origin:left center;transition:transform .7s cubic-bezier(.3,.7,.3,1);backface-visibility:hidden;box-shadow:0 6px 14px rgba(0,0,0,.25)}
+.vak .deur::before{content:'';position:absolute;right:9px;top:50%;width:6px;height:6px;border-radius:50%;background:var(--geel);opacity:.8}
+.vak .nr{font-family:'Anton',sans-serif;font-size:clamp(24px,7vw,32px);line-height:1}
+.vak.dicht .deur{background:#1d3a4d;border-color:rgba(255,255,255,.08);color:rgba(255,255,255,.55);box-shadow:none}
+.vak.dicht .deur::after{content:'🔒';position:absolute;bottom:5px;right:6px;font-size:11px;opacity:.6}
+.vak.vandaag .deur{background:var(--koraal);border-color:var(--geel);animation:pols 1.8s ease-in-out infinite}
+@keyframes pols{50%{transform:scale(1.06)}}
+.vak.open .deur{transform:rotateY(-105deg);box-shadow:none}
+.vak.gedaan .bin::after{content:'✓';position:absolute;top:4px;right:7px;font-size:13px;font-weight:700;color:var(--petrol)}
+.vak.schud{animation:schud .45s}
+@keyframes schud{25%{transform:translateX(-5px)}50%{transform:translateX(5px)}75%{transform:translateX(-3px)}}
+.voet{text-align:center;margin-top:26px;font-size:13px;opacity:.75;line-height:1.6}
+.voet a{color:var(--geel)}
+/* venster */
+.scherm{position:fixed;inset:0;z-index:10;background:rgba(10,20,28,.72);display:flex;align-items:flex-end;justify-content:center;opacity:0;pointer-events:none;transition:opacity .25s}
+.scherm.aan{opacity:1;pointer-events:auto}
+.kaart{background:#fff;color:var(--navy);width:100%;max-width:560px;max-height:88vh;overflow:auto;border-radius:22px 22px 0 0;padding:26px 22px calc(26px + env(safe-area-inset-bottom));transform:translateY(30px);transition:transform .3s}
+.scherm.aan .kaart{transform:none}
+@media (min-width:600px){.scherm{align-items:center}.kaart{border-radius:22px}}
+.kaart .kop{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+.kaart .emo{font-size:40px;line-height:1}
+.kaart small{display:block;font-weight:600;color:var(--petrol);font-size:13px;text-transform:uppercase;letter-spacing:.04em}
+.kaart h2{font-family:'Anton',sans-serif;font-weight:400;text-transform:uppercase;font-size:28px;line-height:1.05;margin:2px 0 0}
+.kaart p{line-height:1.6;margin:0 0 14px}
+.actie{background:var(--geel);border-radius:14px;padding:14px 16px;margin:0 0 14px}
+.actie b{display:block;font-size:13px;text-transform:uppercase;letter-spacing:.04em;color:#7a5a00;margin-bottom:4px}
+.actie p{margin:0;font-weight:600}
+.extra{border:1.5px dashed #bfdfe2;border-radius:14px;padding:12px 14px;font-size:14px;margin:0 0 14px}
+.kaart a.link{color:var(--petrol);font-weight:600;word-break:break-word}
+.knoppen{display:flex;gap:10px;margin-top:6px}
+.knop{flex:1;border:0;border-radius:999px;padding:14px 16px;font:inherit;font-weight:700;font-size:15px;cursor:pointer;min-height:50px}
+.knop.hoofd{background:var(--petrol);color:#fff}
+.knop.hoofd.klaar{background:#dfeeee;color:var(--petrol)}
+.knop.sec{background:#eef3f5;color:var(--navy);flex:0 0 auto}
+.melding{position:fixed;left:50%;bottom:24px;transform:translate(-50%,40px);z-index:20;background:var(--geel);color:var(--navy);font-weight:600;font-size:14px;padding:12px 18px;border-radius:14px;box-shadow:0 8px 24px rgba(0,0,0,.3);opacity:0;transition:.3s;max-width:90vw;text-align:center}
+.melding.aan{opacity:1;transform:translate(-50%,0)}
+.proef{background:var(--koraal);color:#fff;text-align:center;font-size:13px;font-weight:600;padding:6px;position:relative;z-index:2}
+button:focus-visible{outline:3px solid var(--geel);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){.sneeuw{display:none}.vak .deur{transition:none}.vak.vandaag .deur{animation:none}}
+</style>
+</head>
+<body>
+<div class="sneeuw" aria-hidden="true"></div>
+<div class="proef" id="proef" hidden></div>
+<main>
+  <header>
+    <p class="hand">Geniet van december, begin januari met een voorsprong</p>
+    <h1>In Balans<br>December Door</h1>
+    <p class="sub">Elke ochtend om 7:00 gaat er een vakje open. Eén actie, maximaal 5 minuten.</p>
+    <div class="status" id="status" aria-live="polite"></div>
+  </header>
+  <div class="grid" id="grid"></div>
+  <p class="voet">Je check-in en je ervaringen deel je in de WhatsApp-groep <b>Deel je vakje</b>.<br>Een vakje gemist? Geen probleem, open vakjes blijven open.<br>FitCoach Mirlande Besemer · <a href="https://mirlande.nl">mirlande.nl</a></p>
+</main>
+
+<div class="scherm" id="scherm" role="dialog" aria-modal="true" aria-labelledby="k-titel">
+  <div class="kaart">
+    <div class="kop"><span class="emo" id="k-emo"></span><div><small id="k-dag"></small><h2 id="k-titel"></h2></div></div>
+    <p id="k-tekst"></p>
+    <div class="actie"><b>Jouw actie van vandaag</b><p id="k-actie"></p></div>
+    <div class="extra" id="k-extra"></div>
+    <p id="k-checkin" style="font-size:14px"></p>
+    <div class="knoppen">
+      <button class="knop hoofd" id="k-gedaan">Gedaan ✓</button>
+      <button class="knop sec" id="k-sluit">Sluiten</button>
+    </div>
+  </div>
+</div>
+<div class="melding" id="melding" role="status"></div>
+
+<script>
+/* ================================================================
+   INHOUD VAN DE 24 VAKJES
+   Aanpassen? Wijzig alleen de tekst tussen de aanhalingstekens.
+   extra: leeg laten ("") als er die dag geen extraatje is.
+   ================================================================ */
+const VAKJES = [
+ {emo:"🎄",titel:"Welkom!",tekst:"De komende 24 dagen krijg je elke ochtend één kleine actie. Geen dieet, geen schema: pepernoten en gourmetten mogen gewoon.",actie:"Schrijf in één zin op waarom je meedoet. In je notities of op een briefje op de koelkast. Die zin hebben we op kerstavond weer nodig.",extra:"",check:"✅ als je zin er staat. En stem in de poll in de groep."},
+ {emo:"🥚",titel:"Hoeveel eiwit heb jij nodig?",tekst:"Met genoeg eiwit houd je je spieren sterk, zit je langer vol en grijp je minder snel naar de pepernoten.",actie:"Vul mijn eiwitcalculator in. Dat duurt 2 minuten.",link:"https://thewinningteam.my.canva.site/app-voor-eiwitbehoefte-berekenen",linktekst:"Open de eiwitcalculator",extra:"🎁 Extraatje in de groep: de handpalmkaart. Zo vertaal je je getal naar je eigen hand, zonder tellen.",check:"😮 als het meer was dan je dacht, 👍 als het klopte."},
+ {emo:"🥣",titel:"Je ontbijt",tekst:"Je hoeft je ontbijt niet om te gooien. Voeg één ding toe: een eitje of kipfilet op je brood, kwark door je yoghurt of noten over je havermout.",actie:"Kies welk eiwit je morgen aan je ontbijt toevoegt, en zet het klaar.",extra:"",check:"🥚, 🥣 of 🥜 voor wat jij kiest."},
+ {emo:"🍫",titel:"Je noodsnack",tekst:"Om 4 uur nog bijna niks gegeten? Dan pak je wat er ligt. En in december ligt er altijd iets. Een noodsnack met eiwit, zonder koken, voorkomt dat.",actie:"Leg je noodsnack voor morgen klaar: in je tas, la of koelkast. Bijvoorbeeld kwark met bessen, rijstwafels met hüttenkäse of een gekookt eitje.",extra:"🎁 Extraatje in de groep: je snoepplan voor pakjesavond.",check:"1, 2, 3 of 🍫 als je je eigen noodsnack hebt."},
+ {emo:"🎁",titel:"Pakjesavond!",tekst:"Wie overdag weinig eet, staat vanavond uitgehongerd bij de schaal. Het geheim zit dus in vandaag overdag. En vanavond: genieten, zonder schuldgevoel.",actie:"Zorg dat er bij elke maaltijd eiwit en groente op je bord ligt: ontbijt, lunch én avondeten.",extra:"",check:"🎁 vanavond als je erbij was met een volle buik."},
+ {emo:"☀️",titel:"De dag erna",tekst:"Gisteren meer gesnoept dan gepland? Niks goedmaken, niks overslaan. Gewoon je normale dag. Daar zit het verschil tussen ‘nu is het toch verpest’ en doorgaan.",actie:"Gewoon ontbijten, met eiwit. Daarna 5 minuten naar buiten en een extra glas water.",extra:"🎁 Extraatje in de groep: een spraakbericht van Mirlande.",check:"☀️ als je buiten bent geweest."},
+ {emo:"⭐",titel:"Week 1 zit erop!",tekst:"Je weet hoeveel eiwit je nodig hebt, je ontbijt is beter, je hebt een noodsnack én je bent pakjesavond doorgekomen.",actie:"Kijk terug: wat ging deze week goed? Eén ding is genoeg.",extra:"",check:"⭐ als je iets hebt gevonden."},
+ {emo:"🥒",titel:"Het gouden duo",tekst:"Eiwit én vezels: daarmee zit je urenlang vol. Vezels zitten in groente, fruit, volkoren en peulvruchten.",actie:"Voeg één portie groente of fruit toe aan je lunch. Denk aan paprika en komkommer met een kwarkdipje, of spinazie in je wrap.",extra:"🎁 Extraatje in de groep: snelle pasta voor drukke avonden.",check:"🥒 als je lunch een extraatje groen had."},
+ {emo:"🚶‍♀️",titel:"Na het eten",tekst:"De vaatwasser kan wachten, de bank lonkt. Juist nu doen een paar minuten bewegen je goed.",actie:"Wandel 5 minuten na je avondeten. Rondje om het blok, met de hond of met het gezin. Langer mag, 5 is genoeg.",extra:"",check:"🚶‍♀️ als je gelopen hebt."},
+ {emo:"🥂",titel:"Borrel of bedrijfsfeest",tekst:"Met een lege maag naast de bitterballen staan: herkenbaar? Je noodsnack van vakje 4 komt nu goed van pas.",actie:"Eet een uurtje vóór je borrel je noodsnack. Dan kies je bewust wat je pakt.",extra:"🎁 Extraatje in de groep: spiekbriefje voor de borrelplank.",check:"🥂 als er deze week een borrel op je agenda staat."},
+ {emo:"💧",titel:"Het drankje",tekst:"Vrijdagavond: misschien een wijntje. Je hoeft niks te laten staan.",actie:"Drink om en om een glas water. Geen borrel? Zet een fles water op tafel bij het eten.",extra:"",check:"💧 als het gelukt is."},
+ {emo:"💪",titel:"Sterk blijven",tekst:"Word je breed van eiwit en bewegen? Nee. Je houdt je spieren, voelt je sterker en je lijf wordt strakker.",actie:"Doe 2 minuten squats terwijl de waterkoker aanstaat. Billen naar achteren alsof je gaat zitten, en weer omhoog. Pauzes mogen.",extra:"",check:"💪 met het aantal dat je haalde."},
+ {emo:"📝",titel:"Je kerstdiner plannen",tekst:"Nog 11 dagen tot kerst. Weet je nu al wat er op tafel komt, dan hoef je straks niet te improviseren.",actie:"Kies voor je kerstdiner één eiwitbron en één groente die er zeker bij komen. Ben je te gast? Bied aan een groentegerecht mee te nemen.",extra:"🎁 Extraatje in de groep: een feestelijk groentebijgerecht.",check:"🎄 als je kerstdiner een groente heeft."},
+ {emo:"📊",titel:"Week 2 zit erop!",tekst:"Vezels toegevoegd, gewandeld na het eten, je eerste borrel voorbereid én gesquat.",actie:"Stem eerlijk in de poll in de groep: haal je je eiwit? En zet morgen één eiwitproduct extra op je boodschappenlijst.",extra:"",check:"Stem in de poll."},
+ {emo:"📅",titel:"De 80/20-regel",tekst:"80% van je keuzes is je vaste basis. De andere 20% is voor kerstkransjes, een glas wijn en de borrels. Zonder schuldgevoel.",actie:"Zet je laatste feestjes en etentjes op een rij en kies welke momenten jouw 20% zijn.",extra:"",check:"📅 als je 20%-momenten gekozen zijn."},
+ {emo:"🍽️",titel:"Het buffet",tekst:"Tientallen schaaltjes en je bord is vol voor je het weet. Met één simpele regel hou je overzicht.",actie:"Gebruik de bordregel: de helft groente of salade, een kwart eiwit, en het laatste kwart kies je vrij.",extra:"🎁 Extraatje in de groep: de bordregel als plaatje voor je telefoon.",check:"🍽️ als je de bordregel gaat gebruiken."},
+ {emo:"🙋‍♀️",titel:"“Nee, dank je”",tekst:"“Neem nog een stukje, het is toch kerst!” Nee zeggen mag, ook tegen je schoonmoeder. Uitleggen hoeft niet.",actie:"Bedenk één zin die bij jou past. Bijvoorbeeld: “Nee, dank je, het was heerlijk. Ik zit echt vol.”",extra:"",check:"🙋‍♀️ als je zin klaarligt."},
+ {emo:"📞",titel:"Bellen = lopen",tekst:"Geen tijd voor een wandeling? Dan maken we er tijd bij, zonder dat het een minuut extra kost.",actie:"Voer je eerstvolgende telefoongesprek staand of lopend. Door de kamer, in de tuin, de trap op en af.",extra:"",check:"📞 als het gelukt is."},
+ {emo:"🛒",titel:"Kerstboodschappen",tekst:"Wat op je lijstje staat, ligt straks in huis. En wat in huis ligt, eet je.",actie:"Zet rauwkost (paprika, komkommer, worteltjes) en eiwit (kwark, eieren, kipfilet, garnalen) op je kerstboodschappenlijst.",extra:"🎁 Extraatje in de groep: een kerstboodschappenlijst om te kopiëren.",check:"🛒 als ze op je lijstje staan."},
+ {emo:"🌿",titel:"Even alleen jij",tekst:"December is gezellig, maar ook vol. En wie moe en gestrest is, heeft vaak meer trek in iets zoets.",actie:"Ga 5 minuten naar buiten, telefoon thuis. Niet voor de stappen, maar voor jezelf.",extra:"",check:"🌿 als je je 5 minuten hebt gehad."},
+ {emo:"🏁",titel:"Week 3 zit erop!",tekst:"Nog drie vakjes. 80/20, het buffet, nee zeggen, je boodschappen: kijk eens hoe ver je al bent.",actie:"Plan voor de dagen vóór de kerstdiners twee simpele, lichte maaltijden. En: welk vakje neem jij zeker mee naar de kerst?",extra:"",check:"Het nummer van jouw favoriete vakje."},
+ {emo:"🥕",titel:"Rauwkost tijdens het koken",tekst:"Hier een hapje proeven, daar een hapje: voor je aan tafel zit, heb je al half gegeten.",actie:"Snijd een bakje rauwkost voor en zet het naast je snijplank als je gaat koken.",extra:"",check:"🥕 als je bakje klaarstaat."},
+ {emo:"🍢",titel:"Gourmet en kerstdiner",tekst:"Kom niet uitgehongerd aan tafel. Begin met groente en eiwit, en kies daarna wat je écht lekker vindt.",actie:"Eet overdag gewoon je eiwit en groente. Gourmet je? Leg een groenteplank naast het vlees.",extra:"🎁 Extraatje in de groep: de groenteplank voor de gourmet.",check:"Je favoriete kerstgerecht als emoji."},
+ {emo:"✨",titel:"Je hebt het gedaan!",tekst:"Alle 24 vakjes. Lees je zin van vakje 1 nog eens: waarom deed je mee? En dan: geniet, zonder schuldgevoel. Fijne kerstdagen! ❤️",actie:"Schrijf onder je zin hoe jij op 2 januari wilt beginnen. Niet opnieuw, maar verder.",extra:"🎁 Extraatje in de groep: een persoonlijk bedankfilmpje van Mirlande.",check:"🎄✨ als feestelijke afsluiting."}
+];
+
+/* ================================================================ */
+const JAAR = 2026, UUR_OPEN = 7;
+const DAGEN = ['zo','ma','di','wo','do','vr','za'];
+const $ = id => document.getElementById(id);
+const opslag = {
+  lees(k){try{return JSON.parse(localStorage.getItem(k)||'[]')}catch(e){return []}},
+  zet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+};
+
+/* Huidige tijd in Nederland. Proefmodus: ?datum=2026-12-05T08:00 */
+function nuNL(){
+  const q = new URLSearchParams(location.search).get('datum');
+  if(q){
+    const m = q.match(/^(\d{4})-(\d{2})-(\d{2})(?:T(\d{2}))?/);
+    if(m){ $('proef').hidden=false; $('proef').textContent='Proefmodus: je kijkt alsof het '+q.replace('T',' ')+' is';
+      return {j:+m[1],m:+m[2],d:+m[3],u:m[4]?+m[4]:12}; }
+  }
+  const p = Object.fromEntries(new Intl.DateTimeFormat('nl-NL',{timeZone:'Europe/Amsterdam',year:'numeric',month:'numeric',day:'numeric',hour:'numeric',hourCycle:'h23'}).formatToParts(new Date()).map(x=>[x.type,x.value]));
+  return {j:+p.year,m:+p.month,d:+p.day,u:+p.hour};
+}
+/* Het hoogste vakje dat open is (0 = nog niets) */
+function openTot(n){
+  if(n.j>JAAR || (n.j===JAAR && n.m===12 && n.d>24)) return 24;
+  if(n.j<JAAR || n.m<12) return 0;
+  return n.u>=UUR_OPEN ? n.d : n.d-1;
+}
+function datumLabel(i){ const dt=new Date(JAAR,11,i); return DAGEN[dt.getDay()]+' '+i+' december'; }
+
+const geopend = new Set(opslag.lees('ibdd-geopend'));
+const gedaan = new Set(opslag.lees('ibdd-gedaan'));
+let nu = nuNL(), tot = openTot(nu), actief = null;
+
+function status(){
+  let t;
+  if(tot===0){
+    const dagen = (nu.j===JAAR && nu.m===11) ? (31-nu.d-1+1) : null;
+    t = dagen!==null && dagen>0 ? 'Nog <b>'+dagen+(dagen===1?' nachtje':' nachtjes')+'</b> slapen. Vakje 1 opent op di 1 december om 7:00.' : 'Vakje 1 opent op di 1 december om 7:00.';
+    if(nu.j===JAAR && nu.m===11 && nu.d===30) t='Morgenochtend om 7:00 gaat <b>vakje 1</b> open!';
+  } else if(tot<24){
+    t = gedaan.size ? 'Je hebt al <b>'+gedaan.size+' van de 24</b> vakjes gedaan. Lekker bezig!' : 'Vakje <b>'+tot+'</b> staat voor je klaar.';
+  } else t = 'Alle 24 vakjes zijn open. <b>'+gedaan.size+'</b> heb je afgevinkt.';
+  $('status').innerHTML = t;
+}
+
+function teken(){
+  const g=$('grid'); g.innerHTML='';
+  VAKJES.forEach((v,idx)=>{
+    const i=idx+1, b=document.createElement('button');
+    b.className='vak';
+    const isOpen = i<=tot;
+    if(!isOpen) b.classList.add('dicht');
+    else if(geopend.has(i)) b.classList.add('open');
+    else if(i===tot) b.classList.add('vandaag');
+    if(gedaan.has(i)) b.classList.add('gedaan');
+    b.setAttribute('aria-label','Vakje '+i+(isOpen?'':' (nog dicht)'));
+    b.innerHTML='<span class="bin" aria-hidden="true">'+v.emo+'</span><span class="deur"><span class="nr">'+i+'</span></span>';
+    b.addEventListener('click',()=>klik(i,b));
+    g.appendChild(b);
+  });
+  status();
+}
+
+function melding(t){ const m=$('melding'); m.textContent=t; m.classList.add('aan'); clearTimeout(melding.t); melding.t=setTimeout(()=>m.classList.remove('aan'),2600); }
+
+function klik(i,b){
+  if(i>tot){
+    b.classList.remove('schud'); void b.offsetWidth; b.classList.add('schud');
+    melding('Nog even geduld! Vakje '+i+' gaat open op '+datumLabel(i)+' om 7:00.');
+    return;
+  }
+  if(!geopend.has(i)){
+    geopend.add(i); opslag.zet('ibdd-geopend',[...geopend]);
+    b.classList.remove('vandaag'); b.classList.add('open');
+    setTimeout(()=>toon(i),650);
+  } else toon(i);
+}
+
+function toon(i){
+  const v=VAKJES[i-1]; actief=i;
+  $('k-emo').textContent=v.emo;
+  $('k-dag').textContent='Vakje '+i+' · '+datumLabel(i);
+  $('k-titel').textContent=v.titel;
+  $('k-tekst').textContent=v.tekst;
+  const a=$('k-actie'); a.textContent=v.actie;
+  if(v.link){ const l=document.createElement('a'); l.href=v.link; l.target='_blank'; l.rel='noopener'; l.className='link'; l.textContent=' 👉 '+v.linktekst; a.appendChild(document.createElement('br')); a.appendChild(l); }
+  $('k-extra').hidden=!v.extra; $('k-extra').textContent=v.extra;
+  $('k-checkin').innerHTML='<b>Check-in:</b> reageer in WhatsApp met '+v.check.replace(/</g,'&lt;');
+  knopStand();
+  $('scherm').classList.add('aan');
+  $('k-sluit').focus();
+}
+function knopStand(){ const k=$('k-gedaan'), d=gedaan.has(actief); k.textContent=d?'Gedaan ✓ (ongedaan maken)':'Ik heb het gedaan ✓'; k.classList.toggle('klaar',d); }
+$('k-gedaan').addEventListener('click',()=>{
+  if(gedaan.has(actief)) gedaan.delete(actief); else { gedaan.add(actief); melding(gedaan.size===24?'Alle 24! Wat ben ik trots op je ❤️':'Top! Vergeet je check-in in de groep niet.'); }
+  opslag.zet('ibdd-gedaan',[...gedaan]); knopStand(); teken();
+});
+function sluit(){ $('scherm').classList.remove('aan'); }
+$('k-sluit').addEventListener('click',sluit);
+$('scherm').addEventListener('click',e=>{ if(e.target.id==='scherm') sluit(); });
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') sluit(); });
+
+/* Sneeuw */
+(function(){ const s=document.querySelector('.sneeuw'); for(let k=0;k<28;k++){ const f=document.createElement('i'); const z=2+Math.random()*5; f.style.cssText='left:'+Math.random()*100+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+(9+Math.random()*12)+'s;animation-delay:-'+Math.random()*20+'s;--dx:'+(Math.random()*60-30)+'px'; s.appendChild(f);} })();
+
+/* Om 7:00 vanzelf het nieuwe vakje tonen, ook als de pagina openstaat */
+setInterval(()=>{ const n=nuNL(), t=openTot(n); if(t!==tot){ nu=n; tot=t; teken(); } },60000);
+teken();
+</script>
+</body>
+</html>
