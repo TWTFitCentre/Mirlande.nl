@@ -405,8 +405,7 @@ setInterval(loperLoopt,120000);
    Zelf gespeeld met de browser, geen opnames. Alleen oude, rechtenvrije liedjes.
    Notatie: noot+octaaf en lengte in tellen, "-" = rust. Standaard UIT. */
 const LIEDJES_SINT = [
-  {naam:'Sinterklaas kapoentje', tempo:132, noten:
-   'G4 1,G4 1,A4 1,A4 1,G4 1,E4 2,- 1,G4 1,G4 1,A4 1,A4 1,G4 1,E4 2,- 1,G4 1,G4 1,F4 1,F4 1,E4 1,E4 2,- 1,D4 1,D4 1,E4 1,D4 1,C4 3,- 1'}
+  /* Sinterklaasliedje volgt: melodie wordt aangeleverd door Mirlande */
 ];
 const LIEDJES_KERST = [
   {naam:'Jingle Bells', tempo:200, noten:
@@ -435,7 +434,8 @@ function tingel(f,t,duur){
 }
 function speelLied(){
   if(!muziekAan || !ac) return;
-  const lijst=isKerst()?LIEDJES_KERST:LIEDJES_SINT, l=lijst[lied%lijst.length], tel=60/l.tempo;
+  const lijst=isKerst()?LIEDJES_KERST:LIEDJES_SINT; if(!lijst.length) return;
+  const l=lijst[lied%lijst.length], tel=60/l.tempo;
   let t=Math.max(ac.currentTime+.1, volgende);
   l.noten.split(',').forEach(s=>{ const [n,d]=s.trim().split(' '); const dur=parseFloat(d)*tel; if(n!=='-') tingel(freq(n),t,dur); t+=dur; });
   volgende=t+1.5; lied++;
